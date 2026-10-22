@@ -1,0 +1,42 @@
+{
+  "realm": "pageindex",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "pageindex-client",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "dev-secret-change-in-production",
+      "redirectUris": [
+        "http://localhost:5173/*",
+        "http://127.0.0.1:5173/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173"
+      ],
+      "protocolMappers": [
+        {
+          "name": "roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "config": {
+            "multivalued": "true",
+            "user.attribute": "roles",
+            "claim.name": "roles",
+            "jsonType.label": "String",
+            "access.token.claim": "true",
+            "id.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "roles": {
+    "realm": [
+      { "name": "viewer", "description": "Read-only access" },
+      { "name": "analyst", "description": "Read and chat access" },
+      { "name": "admin", "description": "Full administrative access" }
+    ]
+  ]
+}
