@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "current_feature": "project-skeleton",
+  "features": [
+    {
+      "id": "project-skeleton",
+      "title": "Project skeleton with FastAPI backend and React/Vite frontend",
+      "status": "done",
+      "acceptance": [
+        "Backend FastAPI app runs and serves /health endpoint",
+        "Frontend React app builds and serves via Vite dev server",
+        "Docker compose with backend, frontend, and Keycloak services",
+        "Basic CI workflow runs backend and frontend tests"
+      ],
+      "implementation": [
+        "backend/app/main.py",
+        "backend/requirements.txt",
+        "frontend/package.json",
+        "frontend/src/main.tsx",
+        "docker-compose.yaml",
+        ".github/workflows/ci.yml"
+      ],
+      "tests": [
+        "backend/tests/test_health.py",
+        "frontend/src/__tests__/DocumentList.test.tsx",
+        "frontend/src/__tests__/IndexView.test.tsx",
+        "frontend/src/__tests__/ChatView.test.tsx"
+      ]
+    },
+    {
+      "id": "incremental-indexing",
+      "title": "Incremental index updates with content hashing",
+      "status": "done",
+      "acceptance": [
+        "Node-level content hashing detects changed sections between document versions",
+        "Affected subtree rebuild only, not full tree",
+        "Parent summaries recomputed along impacted paths",
+        "Document version history maintained"
+      ],
+      "implementation": [
+        "backend/app/services/indexing.py",
+        "backend/app/api/routes/documents.py"
+      ],
+      "tests": []
+    },
+    {
+      "id": "usage-measurement",
+      "title": "Per-call chat usage measurement across protocols",
+      "status": "in_progress",
+      "acceptance": [
+        "Individual model-call records preserved with identity",
+        "Complete/partial/unknown measurement states distinguished",
+        "Cache-read, cache-write, reasoning quantities retained",
+        "Measurements accessible on success, failure, cancellation"
+      ],
+      "implementation": [
+        "backend/app/models/__init__.py",
+        "backend/app/services/chat.py",
+        "backend/app/api/routes/chat.py"
+      ],
+      "tests": []
+    },
+    {
+      "id": "leaf-node-fix",
+      "title": "Fix get_leaf_nodes KeyError on leaf nodes",
+      "status": "done",
+      "acceptance": [
+        "get_leaf_nodes safely handles nodes without 'nodes' key",
+        "Returns leaf nodes correctly",
+        "Consistent with .get() pattern used elsewhere"
+      ],
+      "implementation": [
+        "backend/app/services/indexing.py"
+      ],
+      "tests": []
+    },
+    {
+      "id": "pydantic-validation",
+      "title": "Pydantic validation for LLM JSON outputs",
+      "status": "planned",
+      "acceptance": [
+        "Pydantic models validate LLM responses against schemas",
+        "Malformed responses detected early with clear errors",
+        "Applied to key output formats in indexing pipeline"
+      ],
+      "implementation": [],
+      "tests": []
+    },
+    {
+      "id": "toc-page-offset-fix",
+      "title": "Fix TypeError: unsupported operand for int + NoneType in TOC processing",
+      "status": "planned",
+      "acceptance": [
+        "add_page_offset_to_toc_json handles None page values",
+        "Graceful handling of missing page numbers",
+        "No crash on incomplete TOC data"
+      ],
+      "implementation": [],
+      "tests": []
+    }
+  ]
+}

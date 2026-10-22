@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "name": "vector-lab-ryan-vo",
+  "owner": "A220man",
+  "email": "ryandtvo@gmail.com",
+  "domain": "AI/ML developer tools",
+  "summary": "Work in progress: vector-lab-ryan-vo",
+  "workflows": [
+    "Upload document and build hierarchical index tree with chapter/section detection",
+    "Incrementally update index by detecting changed nodes via content hashing and rebuilding only affected subtrees",
+    "Chat with indexed documents using LLM with per-call usage tracking (input/output/cache/reasoning tokens)"
+  ],
+  "auth": "oidc-keycloak-saml-broker",
+  "llm_providers": [
+    "openai-compatible",
+    "anthropic",
+    "gemini",
+    "ollama"
+  ],
+  "status": "work-in-progress"
+}
