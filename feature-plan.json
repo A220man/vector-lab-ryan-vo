@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "current_feature": "project-skeleton",
+  "current_feature": "usage-measurement",
   "features": [
     {
       "id": "project-skeleton",
@@ -46,7 +46,7 @@
     {
       "id": "usage-measurement",
       "title": "Per-call chat usage measurement across protocols",
-      "status": "in_progress",
+      "status": "done",
       "acceptance": [
         "Individual model-call records preserved with identity",
         "Complete/partial/unknown measurement states distinguished",
