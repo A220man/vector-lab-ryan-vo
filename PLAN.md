@@ -4,7 +4,7 @@ Each round completes one feature or repair. Future items are planned, not implem
 
 ## Current round
 
-project-skeleton
+usage-measurement
 
 ## Roadmap
 
@@ -36,7 +36,7 @@ Implementation: `backend/app/services/indexing.py`, `backend/app/api/routes/docu
 
 ### usage-measurement — Per-call chat usage measurement across protocols
 
-Status: in_progress
+Status: done
 
 Acceptance:
 - Individual model-call records preserved with identity

@@ -5,7 +5,7 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 from app.core.database import get_session
-from app.models import Document, ChatSession, ChatMessage
+from app.models import Document, ChatSession, ChatMessage, IndexNode
 from app.services.chat import chat_completion
 
 router = APIRouter(prefix="", tags=["chat"])
@@ -68,14 +68,31 @@ async def chat(
         nodes = result.scalars().all()
         context = "\n\n".join([f"{n.title}: {n.content or n.summary or ''}" for n in nodes])
 
-    # Call LLM
-    response_text, usage = await chat_completion(
-        message=request.message,
-        context=context,
-        model=request.model,
-    )
+    # Call LLM with error handling to preserve usage on failure
+    response_text = ""
+    usage = {
+        "model": request.model or "unknown",
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 0,
+        "complete": -1,  # -1 = unknown (failure/cancellation)
+    }
+    try:
+        response_text, usage = await chat_completion(
+            message=request.message,
+            context=context,
+            model=request.model,
+        )
+        # Ensure usage has complete flag
+        usage.setdefault("complete", 1)
+    except Exception as e:
+        # Preserve partial usage if available, mark as failed
+        response_text = f"Error: {str(e)}"
+        usage["complete"] = -1
 
-    # Save assistant message with usage
+    # Save assistant message with usage (even on failure)
     assistant_msg = ChatMessage(
         session_id=chat_session.id,
         role="assistant",
@@ -86,9 +103,10 @@ async def chat(
         usage_cache_read_tokens=usage.get("cache_read_tokens"),
         usage_cache_write_tokens=usage.get("cache_write_tokens"),
         usage_reasoning_tokens=usage.get("reasoning_tokens"),
-        usage_complete=usage.get("complete", 1),
+        usage_complete=usage.get("complete", -1),
     )
     session.add(assistant_msg)
+    await session.flush()  # Flush to get server-generated created_at
 
     chat_session.updated_at = assistant_msg.created_at
     await session.commit()
