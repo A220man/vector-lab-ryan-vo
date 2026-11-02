@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "current_feature": "usage-measurement",
+  "current_feature": "pydantic-validation",
   "features": [
     {
       "id": "project-skeleton",
@@ -77,14 +77,20 @@
     {
       "id": "pydantic-validation",
       "title": "Pydantic validation for LLM JSON outputs",
-      "status": "planned",
+      "status": "done",
       "acceptance": [
         "Pydantic models validate LLM responses against schemas",
         "Malformed responses detected early with clear errors",
         "Applied to key output formats in indexing pipeline"
       ],
-      "implementation": [],
-      "tests": []
+      "implementation": [
+        "backend/app/models/llm_outputs.py",
+        "backend/app/services/indexing.py",
+        "backend/app/api/routes/index.py"
+      ],
+      "tests": [
+        "backend/tests/test_llm_validation.py"
+      ]
     },
     {
       "id": "toc-page-offset-fix",
