@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from app.models import Document, IndexNode, DocumentStatus
-
+from app.models.llm_outputs import NodeSummaryOutput, validate_llm_json_output, safe_parse_llm_json
 
 def compute_hash(text: str) -> str:
     """Compute SHA-256 hash of text content."""
@@ -266,3 +266,79 @@ async def search_nodes(
                 break
 
     return matches
+async def generate_node_summary(
+    node_content: str,
+    llm_response: str,
+) -> NodeSummaryOutput:
+    """
+    Generate and validate a node summary from LLM response.
+
+    Args:
+        node_content: Original node content for context
+        llm_response: Raw JSON string from LLM
+
+    Returns:
+        Validated NodeSummaryOutput model
+
+    Raises:
+        ValueError: If LLM response fails validation
+    """
+    return validate_llm_json_output(
+        llm_response,
+        NodeSummaryOutput,
+        context="Node summary generation"
+    )
+
+
+async def generate_node_summary_safe(
+    node_content: str,
+    llm_response: str,
+) -> NodeSummaryOutput:
+    """
+    Generate node summary with fallback for validation failures.
+
+    Args:
+        node_content: Original node content for context
+        llm_response: Raw JSON string from LLM
+
+    Returns:
+        Validated NodeSummaryOutput model (or fallback)
+    """
+    # Create a basic fallback summary from content
+    fallback = NodeSummaryOutput(
+        summary=node_content[:500] + ("..." if len(node_content) > 500 else ""),
+        key_points=[],
+        confidence=0.3,
+    )
+    return safe_parse_llm_json(
+        llm_response,
+        NodeSummaryOutput,
+        fallback=fallback,
+        context="Node summary generation"
+    )
+
+
+async def update_node_summary(
+    node: IndexNode,
+    llm_response: str,
+    session: AsyncSession,
+) -> NodeSummaryOutput:
+    """
+    Update a node's summary from validated LLM output.
+
+    Args:
+        node: IndexNode to update
+        llm_response: Raw JSON string from LLM
+        session: Database session
+
+    Returns:
+        Validated NodeSummaryOutput model
+    """
+    validated = await generate_node_summary(node.content or "", llm_response)
+
+    node.summary = validated.summary
+    node.summary_hash = compute_hash(validated.summary)
+    await session.commit()
+    await session.refresh(node)
+
+    return validated

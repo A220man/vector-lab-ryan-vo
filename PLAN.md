@@ -4,7 +4,7 @@ Each round completes one feature or repair. Future items are planned, not implem
 
 ## Current round
 
-usage-measurement
+pydantic-validation
 
 ## Roadmap
 
@@ -59,12 +59,16 @@ Implementation: `backend/app/services/indexing.py`
 
 ### pydantic-validation — Pydantic validation for LLM JSON outputs
 
-Status: planned
+Status: done
 
 Acceptance:
 - Pydantic models validate LLM responses against schemas
 - Malformed responses detected early with clear errors
 - Applied to key output formats in indexing pipeline
+
+Implementation: `backend/app/models/llm_outputs.py`, `backend/app/services/indexing.py`, `backend/app/api/routes/index.py`
+
+Tests: `backend/tests/test_llm_validation.py`
 
 ### toc-page-offset-fix — Fix TypeError: unsupported operand for int + NoneType in TOC processing
 

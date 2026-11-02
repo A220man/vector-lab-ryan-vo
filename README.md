@@ -131,6 +131,7 @@ npm run dev
 - `GET /api/v1/index/{doc_id}/leaves` - Get leaf nodes
 - `GET /api/v1/index/{doc_id}/search?q={query}&limit={n}` - Search index
 - `GET /api/v1/index/{doc_id}/nodes/{node_id}` - Get node detail
+- `POST /api/v1/index/validate-summary` - Validate LLM summary output (testing)
 
 ### Chat
 - `POST /api/v1/chat` - Send chat message

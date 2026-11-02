@@ -1,12 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import List, Optional
 import json
+from pydantic import BaseModel
 
 from app.core.database import get_session
 from app.models import Document, IndexNode
-from app.services.indexing import get_tree_structure, get_leaf_nodes, search_nodes
+from app.services.indexing import get_tree_structure, get_leaf_nodes, search_nodes, generate_node_summary, generate_node_summary_safe
+from app.models.llm_outputs import NodeSummaryOutput
 
 router = APIRouter(prefix="", tags=["index"])
 
@@ -85,3 +87,43 @@ async def get_node_detail(
         "content_hash": node.content_hash,
         "summary_hash": node.summary_hash,
     }
+class SummaryValidationRequest(BaseModel):
+    """Request model for summary validation testing."""
+    node_content: str
+    llm_json: str
+
+
+class SummaryValidationResponse(BaseModel):
+    """Response model for summary validation."""
+    valid: bool
+    summary: Optional[NodeSummaryOutput] = None
+    error: Optional[str] = None
+    fallback_used: bool = False
+
+
+@router.post("/validate-summary", response_model=SummaryValidationResponse)
+async def validate_summary(
+    request: SummaryValidationRequest,
+):
+    """
+    Test endpoint to validate LLM summary output against Pydantic model.
+    This demonstrates the validation pipeline without requiring a document.
+    """
+    try:
+        validated = await generate_node_summary(
+            request.node_content,
+            request.llm_json,
+        )
+        return SummaryValidationResponse(valid=True, summary=validated, fallback_used=False)
+    except ValueError as e:
+        # Try with fallback
+        fallback = await generate_node_summary_safe(
+            request.node_content,
+            request.llm_json,
+        )
+        return SummaryValidationResponse(
+            valid=False,
+            summary=fallback,
+            error=str(e),
+            fallback_used=True,
+        )
