@@ -1,9 +1,17 @@
 # Changelog
 
+## 1.3.0 — work-in-progress checkpoint
+
+Partial code published for continued development. Known issues: STATUS.md.
+
 ## 1.2.0 — work-in-progress checkpoint
 
 Partial code published for continued development. Known issues: STATUS.md.
 
+### Added
+- `add_page_offset_to_toc_json` function for TOC page offset handling with None value support
+- Recursive processing of nested TOC children
+- Comprehensive test suite (11 tests) for TOC page offset functionality
 ## 1.1.0 — work-in-progress checkpoint
 
 Partial code published for continued development. Known issues: STATUS.md.

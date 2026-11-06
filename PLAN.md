@@ -72,10 +72,14 @@ Tests: `backend/tests/test_llm_validation.py`
 
 ### toc-page-offset-fix — Fix TypeError: unsupported operand for int + NoneType in TOC processing
 
-Status: planned
+Status: done
 
 Acceptance:
 - add_page_offset_to_toc_json handles None page values
 - Graceful handling of missing page numbers
 - No crash on incomplete TOC data
+
+Implementation: `backend/app/services/indexing.py`
+
+Tests: `backend/tests/test_toc_page_offset.py`
 

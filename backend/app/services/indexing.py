@@ -12,6 +12,36 @@ def compute_hash(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
+
+def add_page_offset_to_toc_json(toc: List[Dict[str, Any]], page_offset: int = 0) -> List[Dict[str, Any]]:
+    """
+    Add page offset to TOC entries, handling None page values gracefully.
+    
+    Args:
+        toc: List of TOC entries, each with optional 'page' field
+        page_offset: Integer offset to add to page numbers
+        
+    Returns:
+        New list with page_offset applied to all non-None page values
+    """
+    result = []
+    for entry in toc:
+        new_entry = entry.copy()
+        page = entry.get("page")
+        if page is not None:
+            try:
+                new_entry["page"] = int(page) + page_offset
+            except (ValueError, TypeError):
+                # If page is not convertible to int, leave as-is
+                new_entry["page"] = page
+        # Recursively handle children if present
+        if "children" in new_entry and isinstance(new_entry["children"], list):
+            new_entry["children"] = add_page_offset_to_toc_json(new_entry["children"], page_offset)
+        result.append(new_entry)
+    return result
+
+
+
 def build_tree_from_pages(pages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """
     Build hierarchical tree structure from flat page list.
