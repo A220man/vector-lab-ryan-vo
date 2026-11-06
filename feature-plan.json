@@ -95,14 +95,18 @@
     {
       "id": "toc-page-offset-fix",
       "title": "Fix TypeError: unsupported operand for int + NoneType in TOC processing",
-      "status": "planned",
+      "status": "done",
       "acceptance": [
         "add_page_offset_to_toc_json handles None page values",
         "Graceful handling of missing page numbers",
         "No crash on incomplete TOC data"
       ],
-      "implementation": [],
-      "tests": []
+      "implementation": [
+        "backend/app/services/indexing.py"
+      ],
+      "tests": [
+        "backend/tests/test_toc_page_offset.py"
+      ]
     }
   ]
 }
