@@ -68,7 +68,7 @@ Acceptance:
 
 Implementation: `backend/app/models/llm_outputs.py`, `backend/app/services/indexing.py`, `backend/app/api/routes/index.py`
 
-Tests: `backend/tests/test_llm_validation.py`
+Tests: `backend/tests/test_llm_validation.py`, `backend/tests/test_index_routes.py`
 
 ### toc-page-offset-fix — Fix TypeError: unsupported operand for int + NoneType in TOC processing
 
