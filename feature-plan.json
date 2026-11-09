@@ -89,7 +89,7 @@
         "backend/app/api/routes/index.py"
       ],
       "tests": [
-        "backend/tests/test_llm_validation.py"
+        "backend/tests/test_llm_validation.py", "backend/tests/test_index_routes.py"
       ]
     },
     {
