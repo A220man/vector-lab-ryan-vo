@@ -336,7 +336,7 @@ async def generate_node_summary_safe(
     """
     # Create a basic fallback summary from content
     fallback = NodeSummaryOutput(
-        summary=node_content[:500] + ("..." if len(node_content) > 500 else ""),
+        summary=node_content[:500] if node_content else "...",
         key_points=[],
         confidence=0.3,
     )
