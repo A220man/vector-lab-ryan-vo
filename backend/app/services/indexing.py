@@ -335,8 +335,10 @@ async def generate_node_summary_safe(
         Validated NodeSummaryOutput model (or fallback)
     """
     # Create a basic fallback summary from content
+    # Strip whitespace to ensure the summary passes validation
+    content_summary = node_content.strip() if node_content else ""
     fallback = NodeSummaryOutput(
-        summary=node_content[:500] if node_content else "...",
+        summary=content_summary[:500] if content_summary else "...",
         key_points=[],
         confidence=0.3,
     )

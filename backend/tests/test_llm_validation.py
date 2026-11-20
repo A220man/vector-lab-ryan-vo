@@ -1,4 +1,5 @@
 import json
+import asyncio
 import pytest
 from app.models.llm_outputs import (
     NodeSummaryOutput,
@@ -196,3 +197,46 @@ class TestSafeParseLLMJson:
         with pytest.raises(ValueError):
             safe_parse_llm_json(json_str, NodeSummaryOutput)
 
+
+import json
+import asyncio
+from app.services.indexing import generate_node_summary_safe
+
+
+def test_generate_node_summary_safe_whitespace_content():
+    """Test generate_node_summary_safe handles whitespace-only content."""
+    # Whitespace-only content with invalid JSON should use fallback "..."
+    result = asyncio.run(generate_node_summary_safe(
+        "   ",
+        "not valid json"
+    ))
+    assert isinstance(result, NodeSummaryOutput)
+    assert result.summary == "..."
+    assert result.key_points == []
+    assert result.confidence == 0.3
+
+
+def test_generate_node_summary_safe_empty_content():
+    """Test generate_node_summary_safe handles empty content."""
+    # Empty content with invalid JSON should use fallback "..."
+    result = asyncio.run(generate_node_summary_safe(
+        "",
+        "not valid json"
+    ))
+    assert isinstance(result, NodeSummaryOutput)
+    assert result.summary == "..."
+    assert result.key_points == []
+    assert result.confidence == 0.3
+
+
+def test_generate_node_summary_safe_normal_content():
+    """Test generate_node_summary_safe works with normal content."""
+    # Normal content with valid LLM response
+    result = asyncio.run(generate_node_summary_safe(
+        "Normal node content",
+        json.dumps({"summary": "Valid summary", "key_points": ["point1"], "confidence": 0.9})
+    ))
+    assert isinstance(result, NodeSummaryOutput)
+    assert result.summary == "Valid summary"
+    assert result.key_points == ["point1"]
+    assert result.confidence == 0.9
