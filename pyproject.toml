@@ -1,6 +1,6 @@
 [project]
 name = "vector-lab-ryan-vo"
-version = "1.6.0"
+version = "1.7.0"
 description = "PageIndex: Document Index for Vectorless, Reasoning-based RAG"
 authors = [{name = "Ryan Vo", email = "ryandtvo@gmail.com"}]
 license = {text = "MIT"}
