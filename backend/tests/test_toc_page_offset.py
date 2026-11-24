@@ -146,3 +146,12 @@ class TestAddPageOffsetToTocJson:
         assert result[0]["children"][0]["children"][0]["page"] == 13
 
 
+
+    def test_zero_page_with_offset(self):
+        """Test page=0 with non-zero offset."""
+        toc = [{"title": "Chapter 1", "page": 0}]
+        result = add_page_offset_to_toc_json(toc, 3)
+        
+        assert result[0]["page"] == 3
+        assert result is not toc  # New list
+        assert result[0] is not toc[0]  # New dict
