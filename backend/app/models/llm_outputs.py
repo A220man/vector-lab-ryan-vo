@@ -90,6 +90,11 @@ def validate_llm_json_output(
     except json.JSONDecodeError as e:
         raise ValueError(f"{context}: Invalid JSON - {e}")
 
+    if not isinstance(data, dict):
+        raise ValueError(
+            f"{context}: Validation failed - expected a JSON object, got {type(data).__name__}"
+        )
+
     try:
         return model_class.model_validate(data)
     except Exception as e:

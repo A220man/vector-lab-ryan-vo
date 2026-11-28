@@ -240,3 +240,29 @@ def test_generate_node_summary_safe_normal_content():
     assert result.summary == "Valid summary"
     assert result.key_points == ["point1"]
     assert result.confidence == 0.9
+
+class TestNonObjectJsonRejected:
+    """Top-level JSON arrays and scalars must fail as ValueError, not AttributeError."""
+
+    def test_array_raises_value_error(self):
+        with pytest.raises(ValueError) as exc:
+            validate_llm_json_output('[{"summary": "a"}]', NodeSummaryOutput, context="Node summary generation")
+        assert "expected a JSON object" in str(exc.value)
+        assert "list" in str(exc.value)
+
+    def test_scalar_raises_value_error(self):
+        with pytest.raises(ValueError):
+            validate_llm_json_output('"just a string"', NodeSummaryOutput)
+
+    def test_null_raises_value_error(self):
+        with pytest.raises(ValueError):
+            validate_llm_json_output('null', NodeSummaryOutput)
+
+    def test_safe_parse_array_uses_fallback(self):
+        fallback = NodeSummaryOutput(summary="fallback", key_points=[], confidence=0.2)
+        result = safe_parse_llm_json('[1, 2, 3]', NodeSummaryOutput, fallback=fallback)
+        assert result is fallback
+
+    def test_safe_parse_array_without_fallback_raises_value_error(self):
+        with pytest.raises(ValueError):
+            safe_parse_llm_json('[1, 2, 3]', NodeSummaryOutput)
